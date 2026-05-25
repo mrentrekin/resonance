@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Resonance Breath</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    width: 100%; height: 100%;
+  }
+
+  .circle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(60vw, 60vh, 220px);
+    height: min(60vw, 60vh, 220px);
+  }
+
+  .circle {
+    border-radius: 50%;
+    background: #111;
+    width: 8%;
+    height: 8%;
+    /*
+      Resonance = 5s inhale + 5s exhale = 10s cycle
+      No holds — the breath is continuous, sinusoidal
+      50% = inhale complete (100%)
+      100% = exhale complete (dot)
+      Easing is a smooth sine-like curve both ways
+    */
+    animation: resonance 10s ease-in-out infinite;
+  }
+
+  @keyframes resonance {
+    0%   { width: 8%;   height: 8%;   }
+    50%  { width: 100%; height: 100%; }
+    100% { width: 8%;   height: 8%;   }
+  }
+
+  .label {
+    font-size: clamp(13px, 4vw, 17px);
+    font-weight: 300;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #111;
+    min-height: 1.4em;
+    text-align: center;
+  }
+
+  .sublabel {
+    font-size: clamp(10px, 3vw, 13px);
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: #888;
+    min-height: 1.2em;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="circle-wrap">
+    <div class="circle"></div>
+  </div>
+  <div class="label" id="label">Inhale</div>
+  <div class="sublabel" id="sublabel">through nose</div>
+</div>
+
+<script>
+  /*
+    5s inhale, 5s exhale — continuous, no holds
+    6 breaths per minute
+  */
+  const label    = document.getElementById('label');
+  const sublabel = document.getElementById('sublabel');
+
+  const phases = [
+    { label: 'Inhale', sub: 'through nose',  duration: 5000 },
+    { label: 'Exhale', sub: 'through nose',  duration: 5000 },
+  ];
+
+  let phase = 0;
+
+  function nextPhase() {
+    label.textContent    = phases[phase].label;
+    sublabel.textContent = phases[phase].sub;
+    const dur = phases[phase].duration;
+    phase = (phase + 1) % phases.length;
+    setTimeout(nextPhase, dur);
+  }
+
+  nextPhase();
+</script>
+</body>
+</html>
